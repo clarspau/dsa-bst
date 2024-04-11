@@ -46,7 +46,29 @@ class BinarySearchTree {
   /** insertRecursively(val): insert a new node into the BST with value val.
    * Returns the tree. Uses recursion. */
 
-  insertRecursively(val) {
+  insertRecursively(val, current = this.root) {
+    // if the tree is empty, insert the value at the root
+    if (this.root === null) {
+      this.root = new Node(val);
+      return this;
+    }
+
+    // else, find the correct position for the value
+    if (val < current.val) {
+      if (current.left === null) {
+        current.left = new Node(val);
+        return this;
+      } else {
+        return this.insertRecursively(val, current.left);
+      }
+    } else {
+      if (current.right === null) {
+        current.right = new Node(val);
+        return this;
+      } else {
+        return this.insertRecursively(val, current.right);
+      }
+    }
 
   }
 
@@ -54,42 +76,113 @@ class BinarySearchTree {
    * return the node, if found; else undefined. Uses iteration. */
 
   find(val) {
+    let current = this.root;
+    let found = false;
 
+    if (val === current.val) return current;
+
+    while (current && !found) {
+      if (val < current.val) {
+        current = current.left;
+      } else if (val > current.val) {
+        current = current.right;
+      } else {
+        found = true;
+      }
+    }
+
+    if (!found) return undefined;
+    return current;
   }
 
   /** findRecursively(val): search the tree for a node with value val.
    * return the node, if found; else undefined. Uses recursion. */
 
-  findRecursively(val) {
+  findRecursively(val, current = this.root) {
+    if (this.root === null) return undefined;
 
+    if (val < current.val) {
+      if (current.left === null) return undefined;
+      return this.findRecursively(val, current.left);
+    } else if (val > current.val) {
+      if (current.right === null) return undefined;
+      return this.findRecursively(val, current.right);
+    }
+    return current;
   }
 
   /** dfsPreOrder(): Traverse the array using pre-order DFS.
    * Return an array of visited nodes. */
 
   dfsPreOrder() {
+    let data = [];
+    let current = this.root;
 
+    // helper function to traverse the tree
+    function traverse(node) {
+      data.push(node.val);
+      if (node.left) traverse(node.left);
+      if (node.right) traverse(node.right);
+    }
+
+    traverse(current);
+    return data;
   }
 
   /** dfsInOrder(): Traverse the array using in-order DFS.
    * Return an array of visited nodes. */
 
   dfsInOrder() {
+    let data = [];
+    let current = this.root;
 
+    // helper function to traverse the tree
+    function traverse(node) {
+      node.left && traverse(node.left);
+      data.push(node.val);
+      node.right && traverse(node.right);
+    }
+
+    traverse(current);
+    return data;
   }
 
   /** dfsPostOrder(): Traverse the array using post-order DFS.
    * Return an array of visited nodes. */
 
   dfsPostOrder() {
+    let data = [];
+    let current = this.root;
 
+    // helper function to traverse the tree
+    function traverse(node) {
+      node.left && traverse(node.left);
+      node.right && traverse(node.right);
+      data.push(node.val);
+    }
+
+    traverse(current);
+    return data;
   }
 
   /** bfs(): Traverse the array using BFS.
    * Return an array of visited nodes. */
 
   bfs() {
+    let data = [];
+    let queue = [];
+    let node = this.root;
 
+    queue.push(node);
+
+    while (queue.length) {
+      node = queue.shift();
+      data.push(node.val);
+      if (node.left) queue.push(node.left);
+      if (node.right) queue.push(node.right);
+    }
+
+    return data;
   }
 
   /** Further Study!
@@ -97,7 +190,80 @@ class BinarySearchTree {
    * Returns the removed node. */
 
   remove(val) {
+    let nodeToRemove = this.find(val);
+    let parent;
 
+    while (nodeToRemove.val !== val) {
+      parent = nodeToRemove;
+      if (val < nodeToRemove.val) {
+        nodeToRemove = nodeToRemove.left;
+      } else {
+        nodeToRemove = nodeToRemove.right;
+      }
+    }
+
+    if (nodeToRemove !== this.root) {
+      if (nodeToRemove.left === null && nodeToRemove.right === null) {
+        if (parent.left === nodeToRemove) {
+          parent.left = null;
+        }
+        else {
+          parent.right = null;
+        }
+      }
+      else if (nodeToRemove.left !== null && nodeToRemove.right !== null) {
+        let rightParent = nodeToRemove;
+        let right = nodeToRemove.right;
+
+        if (right.left === null) {
+          right.left = nodeToRemove.left;
+
+          if (parent.left === nodeToRemove) {
+            parent.left = right;
+          }
+          else {
+            parent.right = right;
+          }
+        }
+        else {
+          while (right.left !== null) {
+            rightParent = right;
+            right = right.left;
+          }
+          if (parent.left === nodeToRemove) {
+            parent.left.val = right.vel;
+          }
+          else {
+            parent.right.val = right.val;
+          }
+          if (right.right !== null) {
+            rightParent.left = right.right;
+          }
+          else {
+            rightParent.left = null;
+          }
+        }
+      }
+      else {
+        if (parent.left === nodeToRemove) {
+          if (nodeToRemove.right === null) {
+            parent.left = nodeToRemove.left;
+          }
+          else {
+            parent.left = nodeToRemove.right;
+          }
+        }
+        else {
+          if (nodeToRemove.right == null) {
+            parent.right = nodeToRemove.left;
+          }
+          else {
+            parent.right = nodeToRemove.right;
+          }
+        }
+      }
+    }
+    return nodeToRemove;
   }
 
   /** Further Study!
