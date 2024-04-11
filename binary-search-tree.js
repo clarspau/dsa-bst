@@ -136,10 +136,11 @@ class BinarySearchTree {
     let data = [];
     let current = this.root;
 
-    // helper function to traverse the tree
     function traverse(node) {
+      // if the node has a left child, traverse the left child
       node.left && traverse(node.left);
       data.push(node.val);
+      // if the node has a right child, traverse the right child
       node.right && traverse(node.right);
     }
 
@@ -154,9 +155,10 @@ class BinarySearchTree {
     let data = [];
     let current = this.root;
 
-    // helper function to traverse the tree
     function traverse(node) {
+      // if the node has a left child, traverse the left child
       node.left && traverse(node.left);
+      // if the node has a right child, traverse the right child
       node.right && traverse(node.right);
       data.push(node.val);
     }
@@ -265,16 +267,42 @@ class BinarySearchTree {
   /** Further Study!
    * isBalanced(): Returns true if the BST is balanced, false otherwise. */
 
-  isBalanced() {
+  isBalanced(current = this.root) {
+    // if the tree is empty, return true
+    if (current === null) return true;
+    // if the tree is not empty, check if the tree is balanced
+    return maxDepth(current) - minDepth(current) <= 1;
 
+    function minDepth(current) {
+      if (current === null) return 0;
+      return 1 + Math.min(minDepth(current.left), minDepth(current.right));
+    }
+
+    function macDepth(current) {
+      if (current === null) return 0;
+      return 1 + Math.max(maxDepth(current.left), macDepth(current.right));
+    }
   }
 
   /** Further Study!
    * findSecondHighest(): Find the second highest value in the BST, if it exists.
    * Otherwise return undefined. */
 
-  findSecondHighest() {
+  findSecondHighest(current = this.root) {
+    // if the tree is too small, return undefined
+    if (!this.root || (!this.root.left && !this.root.right)) return undefined;
 
+    while (current) {
+      // if the largest value is the root and the root has no left child
+      if (current.left && !current.right) {
+        return findMax(current.left);
+      }
+      // if the second largest value is the parent of the largest value
+      if (current.right && !current.right.left && !current.right.right) {
+        return current.val;
+      }
+      current = current.right;
+    }
   }
 }
 
