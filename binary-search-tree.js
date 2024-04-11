@@ -190,9 +190,11 @@ class BinarySearchTree {
    * Returns the removed node. */
 
   remove(val) {
-    let nodeToRemove = this.find(val);
+    // if the tree is empty, return null
+    let nodeToRemove = this.root;
     let parent;
 
+    // find the node to remove
     while (nodeToRemove.val !== val) {
       parent = nodeToRemove;
       if (val < nodeToRemove.val) {
@@ -202,62 +204,56 @@ class BinarySearchTree {
       }
     }
 
+    // if the node is not found, return null
     if (nodeToRemove !== this.root) {
+      // if the node has no children
       if (nodeToRemove.left === null && nodeToRemove.right === null) {
         if (parent.left === nodeToRemove) {
           parent.left = null;
-        }
-        else {
+        } else {
           parent.right = null;
         }
       }
+      // if the node has two children
       else if (nodeToRemove.left !== null && nodeToRemove.right !== null) {
         let rightParent = nodeToRemove;
         let right = nodeToRemove.right;
-
         if (right.left === null) {
           right.left = nodeToRemove.left;
-
           if (parent.left === nodeToRemove) {
             parent.left = right;
-          }
-          else {
+          } else {
             parent.right = right;
           }
-        }
-        else {
+        } else {
           while (right.left !== null) {
             rightParent = right;
             right = right.left;
           }
           if (parent.left === nodeToRemove) {
-            parent.left.val = right.vel;
-          }
-          else {
+            parent.left.val = right.val;
+          } else {
             parent.right.val = right.val;
           }
           if (right.right !== null) {
             rightParent.left = right.right;
-          }
-          else {
+          } else {
             rightParent.left = null;
           }
         }
       }
+      // if the node has one child
       else {
         if (parent.left === nodeToRemove) {
           if (nodeToRemove.right === null) {
             parent.left = nodeToRemove.left;
-          }
-          else {
+          } else {
             parent.left = nodeToRemove.right;
           }
-        }
-        else {
-          if (nodeToRemove.right == null) {
+        } else {
+          if (nodeToRemove.right === null) {
             parent.right = nodeToRemove.left;
-          }
-          else {
+          } else {
             parent.right = nodeToRemove.right;
           }
         }
